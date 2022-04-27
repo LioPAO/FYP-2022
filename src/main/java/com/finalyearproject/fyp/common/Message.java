@@ -15,12 +15,12 @@ public class Message {
 
     public static String fieldNotEmpty(String field){ return field.toUpperCase() + "CANNOT BE EMPTY"; }
 
-    public static String updated(ResourceType resourceType){ return resourceType + updated;}
+    public static String updated(ResourceType resourceType){ return resourceType +" " + updated;}
 
-    public static String deleted(ResourceType resourceType){ return resourceType + deleted;}
+    public static String deleted(ResourceType resourceType){ return resourceType +" " + deleted;}
 
-    public static String added(ResourceType resourceType){ return resourceType + added;}
+    public static String added(ResourceType resourceType){ return resourceType +" " + added;}
 
-    public static String removed(ResourceType resourceType){ return resourceType + removed;}
+    public static String removed(ResourceType resourceType){ return resourceType +" " + removed;}
 
 }

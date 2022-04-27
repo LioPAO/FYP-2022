@@ -1,6 +1,5 @@
 package com.finalyearproject.fyp.repository;
 
-import com.finalyearproject.fyp.dto.Response.AddressResponseDTO;
 import com.finalyearproject.fyp.model.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

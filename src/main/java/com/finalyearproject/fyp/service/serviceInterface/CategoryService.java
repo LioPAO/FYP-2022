@@ -24,11 +24,11 @@ public interface CategoryService {
 
     String deleteCategory(Long Id);
 
-    String addProducts(Long categoryId, Long productId);
-
-    String removeProduct(Long categoryId, Long productId);
-
-    String addProducts(Long categoryId, List<Long> productIdList);
-
-    String removeProducts(Long categoryId, List<Long> productIdList);
+//    String addProduct(Long categoryId, Long productId);
+//
+//    String removeProduct(Long categoryId, Long productId);
+//
+//    String addProducts(Long categoryId, List<Long> productIdList);
+//
+//    String removeProducts(Long categoryId, List<Long> productIdList);
 }

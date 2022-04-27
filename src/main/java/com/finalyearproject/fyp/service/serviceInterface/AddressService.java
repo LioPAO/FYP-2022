@@ -3,9 +3,11 @@ package com.finalyearproject.fyp.service.serviceInterface;
 import com.finalyearproject.fyp.dto.Request.AddressRequestDTO;
 import com.finalyearproject.fyp.dto.Response.AddressResponseDTO;
 import com.finalyearproject.fyp.model.Address;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface AddressService {
 
     AddressResponseDTO createAddress(AddressRequestDTO addressRequestDTO);
@@ -23,4 +25,6 @@ public interface AddressService {
     String updateAddress(Long id, AddressRequestDTO Address);
 
     String deleteAddress(Long Id);
+
+    String deleteAddress();
 }

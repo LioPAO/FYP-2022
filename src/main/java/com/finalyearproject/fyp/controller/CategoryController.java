@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -50,29 +49,6 @@ public class CategoryController {
     public ResponseEntity<String> updateUser(@Valid @PathVariable("id") Long id,
                                              @RequestBody CategoryRequestDTO categoryRequestDTO){
         return ResponseEntity.ok(categoryService.updateCategory(id,categoryRequestDTO));
-    }
-
-    @PostMapping("/add/product/{productId}/to/category{categoryId}")
-    public ResponseEntity<String> addProducts(@PathVariable @NotNull Long categoryId,
-                                              @PathVariable @NotNull Long productId){
-
-    }
-
-    @PostMapping("/add/product/to/category{categoryId}")
-    public ResponseEntity<String> addProducts(@PathVariable @NotNull Long categoryId,
-                                              @RequestBody @NotNull List <Long> productId){
-
-    }
-
-    @PostMapping("/remove/product/{productId}/from/category{categoryId}")
-    public ResponseEntity<String> removeProduct(@RequestBody @NotNull Long categoryId,
-                                                @PathVariable@NotNull Long productId){
-
-    }
-
-    @PostMapping("/remove/products/from/category{categoryId}")
-    public ResponseEntity<String> removeProducts(@RequestBody @NotNull Long categoryId,@NotNull Long productId){
-
     }
 
     //DELETE USER

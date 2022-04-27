@@ -22,7 +22,7 @@ public interface ProductService {
 
     List<ProductResponseDTO> getProductByName(String productName);
 
-    public List<ProductResponseDTO> getProductByPriceRange(int price);
+    List<ProductResponseDTO> getProductByPriceRange(int price, int price2);
 
     String updateProduct(Long productId, ProductRequestDTO productRequestDTO);
 

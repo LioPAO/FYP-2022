@@ -51,7 +51,7 @@ public class User {
     private LocalDate joinedOn;
 
     @OneToMany
-    @JoinColumn(name = "address_id")
+    @JoinColumn(name = "user_id")
     private Set<Address> address = new TreeSet<>();
 
     public User(UserRequestDTO userRequestDTO) {

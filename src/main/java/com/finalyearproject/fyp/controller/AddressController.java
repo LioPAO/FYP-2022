@@ -23,7 +23,7 @@ public class AddressController {
     }
 
     //CREATE NEW ADDRESS
-    @PostMapping("/")
+    @PostMapping("/address")
     public ResponseEntity<AddressResponseDTO> createAddress(@Valid @RequestBody AddressRequestDTO addressRequestDTO){
         return new ResponseEntity<>(addressService.createAddress(addressRequestDTO), HttpStatus.CREATED);
     }
@@ -51,8 +51,7 @@ public class AddressController {
 
     //UPDATE USER
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@Valid @PathVariable("id") Long id,
-                                             @RequestBody AddressRequestDTO addressRequestDTO){
+    public ResponseEntity<String> updateUser(@PathVariable("id") Long id,   @RequestBody AddressRequestDTO addressRequestDTO){
         return ResponseEntity.ok(addressService.updateAddress(id,addressRequestDTO));
     }
 
@@ -60,5 +59,11 @@ public class AddressController {
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable("id") Long id){
         return addressService.deleteAddress(id);
+    }
+
+
+    @DeleteMapping("/")
+    public String deleteUser(){
+        return addressService.deleteAddress();
     }
 }

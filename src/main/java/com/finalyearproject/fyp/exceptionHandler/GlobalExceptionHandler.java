@@ -40,11 +40,4 @@ public class GlobalExceptionHandler {
                     new ExceptionErrorMessage(Message.invalidInput,request.getServletPath(), bindingDetails),
                 HttpStatus.BAD_REQUEST);
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionErrorMessage> illegalArgumentException(IllegalArgumentException exception,HttpServletRequest request){
-        return new ResponseEntity(
-                new ExceptionErrorMessage(exception.getMessage(), request.getServletPath()),HttpStatus.NOT_FOUND);
-    }
-
 }

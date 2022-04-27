@@ -1,6 +1,7 @@
 package com.finalyearproject.fyp.service.serviceImpl;
 
 import com.finalyearproject.fyp.common.Message;
+import com.finalyearproject.fyp.common.MyUtils;
 import com.finalyearproject.fyp.common.ResourceType;
 import com.finalyearproject.fyp.dto.Request.ProductRequestDTO;
 import com.finalyearproject.fyp.dto.Response.ProductResponseDTO;
@@ -8,6 +9,7 @@ import com.finalyearproject.fyp.exceptionHandler.ResourceNotFoundException;
 import com.finalyearproject.fyp.mapper.ProductMapper;
 import com.finalyearproject.fyp.model.Category;
 import com.finalyearproject.fyp.model.Product;
+import com.finalyearproject.fyp.model.User;
 import com.finalyearproject.fyp.repository.ProductRepository;
 import com.finalyearproject.fyp.service.serviceInterface.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
     @Transactional
     @Override
     public ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
-        Product product = productMapper.productRequestDTOToProduct(productRequestDTO);
+        Product product = new Product(productRequestDTO);
         return productMapper.productToProductResponseDTO(productRepository.save(product));
     }
 
@@ -60,7 +62,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
     @Transactional
     @Override
     public String deleteProduct(Long id) {
-        productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.PRODUCT, id)));
+        this.getProduct(id);
         productRepository.deleteById(id);
         return Message.deleted(ResourceType.PRODUCT);
     }
@@ -93,16 +95,16 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
 
     @Override
     public String addCategories(Long productId, List<Long> categoryId) {
-        if(!categoryId.isEmpty()){
-            categoryId.forEach(id ->addCategory(productId,id));
+        if (!categoryId.isEmpty()) {
+            categoryId.forEach(id -> addCategory(productId, id));
         }
         return Message.added(ResourceType.CATEGORIES);
     }
 
     @Override
     public String removeCategories(Long productId, List<Long> categoryId) {
-        if(!categoryId.isEmpty()){
-            categoryId.forEach(id ->removeCategory(productId,id));
+        if (!categoryId.isEmpty()) {
+            categoryId.forEach(id -> removeCategory(productId, id));
         }
         return Message.removed(ResourceType.CATEGORIES);
     }
@@ -110,13 +112,13 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
     @Transactional
     @Override
     public String addInventoryQuantity(Long productId, int quantity) {
-        getProduct(productId).addInventoryQuantityBy(quantity);
+        this.getProduct(productId).addInventoryQuantityBy(quantity);
         return "QUANTITY " + Message.updated;
     }
 
     @Override
     public String reduceInventoryQuantity(Long productId, int quantity) {
-        getProduct(productId).subtractInventoryQuantityBy(quantity);
+        this.getProduct(productId).subtractInventoryQuantityBy(quantity);
         return "QUANTITY " + Message.updated;
     }
 
@@ -130,28 +132,44 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
 
 
     @Override
-    public List<ProductResponseDTO> getProductByPriceRange(int price) {
-        return null;// TODO: 4/27/2022 Use Query to get this result
+    public List<ProductResponseDTO> getProductByPriceRange(int price1, int price2) {
+        // TODO: 4/27/2022 Use Query to get this result
+        return productRepository.findByPriceBetween(price1, price2)
+                .stream()
+                .map(productMapper::productToProductResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional
     @Override
     public String updateProduct(Long productId, ProductRequestDTO productRequestDTO) {
 
-        Product toBeUpdated = getProduct(productId);
+        Product update = getProduct(productId);
 
-        toBeUpdated.setName(productRequestDTO.getName());
-        toBeUpdated.setPrice(productRequestDTO.getPrice());
-        toBeUpdated.setDescription(productRequestDTO.getDescription());
-        toBeUpdated.setImageUrl(productRequestDTO.getImageUrl());
-        toBeUpdated.setCost(productRequestDTO.getCost());
-        toBeUpdated.setInventoryQuantityBy(productRequestDTO.getInventoryQuantity());
+        if (MyUtils.isNotEmptyAndNotNull(productRequestDTO.getName())) {
+            update.setName(productRequestDTO.getName());
+        }
+        if (productRequestDTO.getPrice() > -1) {
+            update.setPrice(productRequestDTO.getPrice());
+        }
+        if (MyUtils.isNotEmptyAndNotNull(productRequestDTO.getDescription())) {
+            update.setDescription(productRequestDTO.getDescription());
+        }
+        if (MyUtils.isNotEmptyAndNotNull(productRequestDTO.getImageUrl())) {
+            update.setImageUrl(productRequestDTO.getImageUrl());
+        }
+        if (productRequestDTO.getCost() > -1) {
+            update.setCost(productRequestDTO.getCost());
+        }
+        if (productRequestDTO.getInventoryQuantity() > -1) {
+            update.setInventoryQuantityBy(productRequestDTO.getInventoryQuantity());
+        }
         /*
-         * No updates for category here because of its ambiguity.
+         No updates for category here because of its ambiguity.
          * Should the given category me added or removed?
          * Either case it is best to use the add/remove category methods to perform those actions as the case may be
          * */
-        productRepository.save(toBeUpdated);
+        productRepository.save(update);
 
         return Message.updated(ResourceType.PRODUCT);
     }

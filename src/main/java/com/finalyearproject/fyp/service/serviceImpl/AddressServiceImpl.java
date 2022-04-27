@@ -1,6 +1,7 @@
 package com.finalyearproject.fyp.service.serviceImpl;
 
 import com.finalyearproject.fyp.common.Message;
+import com.finalyearproject.fyp.common.MyUtils;
 import com.finalyearproject.fyp.common.ResourceType;
 import com.finalyearproject.fyp.dto.Request.AddressRequestDTO;
 import com.finalyearproject.fyp.dto.Response.AddressResponseDTO;
@@ -57,7 +58,7 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
 
     public List<AddressResponseDTO> getAddressByState(String state) {
         // TODO: 4/27/2022 Write Query to search by name. Do same for other entities
-        return addressRepository.findAddressByCity(state)
+        return addressRepository.findAddressByState(state)
                 .stream()
                 .map(addressMapper::addressToAddressResponseDTO)
                 .collect(Collectors.toList());
@@ -78,18 +79,23 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
         Address update = addressRepository.findById(id).orElseThrow(
                 ()->new ResourceNotFoundException(Message.resourceNotFound(ResourceType.ADDRESS,id)));
 
-        update.setCity(addressRequestDTO.getCity());
-        update.setState(addressRequestDTO.getState());
-        update.setStreet(addressRequestDTO.getStreet());
+        if (MyUtils.isNotEmptyAndNotNull(addressRequestDTO.getCity())){update.setCity(addressRequestDTO.getCity());}
+        if (MyUtils.isNotEmptyAndNotNull(addressRequestDTO.getState())){update.setState(addressRequestDTO.getState());}
+        if (MyUtils.isNotEmptyAndNotNull(addressRequestDTO.getStreet())){update.setStreet(addressRequestDTO.getStreet());}
         addressRepository.save(update);
         return Message.updated(ResourceType.ADDRESS);
     }
     @Transactional
     @Override
     public String deleteAddress(Long id) {
-        addressRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException(Message.resourceNotFound(ResourceType.ADDRESS,id)));
+        this.getAddress(id);
         addressRepository.deleteById(id);
         return Message.deleted(ResourceType.ADDRESS);
+    }
+
+    @Override
+    public String deleteAddress() {
+        addressRepository.deleteAll();
+        return Message.deleted(ResourceType.ADDRESSES);
     }
 }
