@@ -2,6 +2,7 @@ package com.finalyearproject.fyp.service.serviceInterface;
 
 import com.finalyearproject.fyp.dto.Request.UserRequestDTO;
 import com.finalyearproject.fyp.dto.Response.UserResponseDTO;
+import com.finalyearproject.fyp.model.User;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -13,6 +14,8 @@ public interface UserService {
     @Transactional
     UserResponseDTO createUser(UserRequestDTO userRequestDTO);
 
+    User getUser(Long id);
+
     UserResponseDTO getUserById(Long id);
 
     @Transactional
@@ -20,6 +23,10 @@ public interface UserService {
 
     @Transactional
     String deleteUser(Long Id);
+
+    String addAddress(Long addressId,Long userId);
+
+    String removeAddress(Long addressId, Long userId) ;
 
     List<UserResponseDTO> getUserByFirstName(String firstname);
 

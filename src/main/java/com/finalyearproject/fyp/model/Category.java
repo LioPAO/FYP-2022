@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,11 +15,7 @@ import java.util.TreeSet;
 public class Category {
 
     @Id
-    @SequenceGenerator( name = "categoryID" ,
-            sequenceName = "categoryID",
-            allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator="categoryID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id", nullable = false)
     @Setter(AccessLevel.NONE)
     private Long id;
@@ -28,7 +23,7 @@ public class Category {
     private String name;
     private String description;
     private String imageUrl;
-    @ManyToMany(mappedBy = "category")
+    @ManyToMany(mappedBy = "category",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Product> product = new TreeSet<>();
 
     public void addProduct(Product product) {this.product.add(product);}

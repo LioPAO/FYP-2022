@@ -20,11 +20,7 @@ import java.util.*;
 public class User {
 
     @Id
-    @SequenceGenerator( name = "userID" ,
-            sequenceName = "userID",
-            allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator="userID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     @Column(name="user_id",nullable = false)
     private Long id;
@@ -50,7 +46,7 @@ public class User {
     @Setter(AccessLevel.NONE)
     private LocalDate joinedOn;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Set<Address> address = new TreeSet<>();
 

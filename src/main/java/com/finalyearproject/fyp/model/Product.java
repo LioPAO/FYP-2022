@@ -18,11 +18,7 @@ import java.util.TreeSet;
 @Table(name = "PRODUCT")
 public class Product implements Comparable<Product> {
     @Id
-    @SequenceGenerator(name = "productID",
-            sequenceName = "productID",
-            allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator = "productID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     @Column(name = "product_id", nullable = false)
     private Long id;
@@ -34,11 +30,11 @@ public class Product implements Comparable<Product> {
     private String imageUrl;
     private int cost;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "inventory_id")
     private ProductInventory inventory;
 
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "Product_Category", joinColumns = {@JoinColumn(name = "product_id")}, inverseJoinColumns = {@JoinColumn(name = "category_id")})
     private Set<Category> category;
 
@@ -64,7 +60,6 @@ public class Product implements Comparable<Product> {
     }
 
     public int getInventoryQuantity() {
-        if (inventory == null) return 0;
         return inventory.getQuantity();
     }
 

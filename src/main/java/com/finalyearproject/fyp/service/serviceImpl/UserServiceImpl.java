@@ -2,6 +2,7 @@ package com.finalyearproject.fyp.service.serviceImpl;
 
 import com.finalyearproject.fyp.common.Gender;
 import com.finalyearproject.fyp.common.Message;
+import com.finalyearproject.fyp.common.MyUtils;
 import com.finalyearproject.fyp.common.ResourceType;
 import com.finalyearproject.fyp.config.StringToEnumConverter;
 import com.finalyearproject.fyp.dto.Request.UserRequestDTO;
@@ -28,30 +29,36 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
     private final UserMapper userMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, AddressService addressService, UserMapper userMapper){
+    public UserServiceImpl(UserRepository userRepository, AddressService addressService, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.addressService = addressService;
         this.userMapper = userMapper;
     }
+
     @Transactional
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
         User user = new User(userRequestDTO);
-        return userMapper.userToUserResponseDTO( userRepository.save(user));
+        return userMapper.userToUserResponseDTO(userRepository.save(user));
     }
 
     @Override
-    public List<UserResponseDTO> getAllUsers(){
+    public List<UserResponseDTO> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
         return allUsers.stream().map(userMapper::userToUserResponseDTO).collect(Collectors.toList());
     }
 
     @Override
-    public UserResponseDTO getUserById(Long id) {
+    public User getUser(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER, id)));
+    }
 
-         User user = userRepository.findById(id).orElseThrow(
-                 ()->new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER,id)));
-         return userMapper.userToUserResponseDTO(user);
+    @Override
+    public UserResponseDTO getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER, id)));
+        return userMapper.userToUserResponseDTO(user);
 
     }
 
@@ -60,19 +67,32 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
     @Override
     public String updateUser(Long id, UserRequestDTO userRequestDTO) {
         User update = userRepository.findById(id).orElseThrow(
-                ()->new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER,id)));
+                () -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER, id)));
 
-        Gender gender= new StringToEnumConverter().convert(userRequestDTO.getGender()); //CONVERTS GENDER INPUT TO ENUM TYPE GENDER
-        update.setFirstName(userRequestDTO.getFirstName());
-        update.setLastName(userRequestDTO.getLastName());
-        if(userRequestDTO.getAddressId()!= null){
+
+        if (MyUtils.isNotEmptyAndNotNull(userRequestDTO.getFirstName())) {
+            update.setFirstName(userRequestDTO.getFirstName());
+        }
+        if (MyUtils.isNotEmptyAndNotNull(userRequestDTO.getLastName())) {
+            update.setLastName(userRequestDTO.getLastName());
+        }
+        if (userRequestDTO.getAddressId() != null) {
             Address newAddress = addressService.getAddress(userRequestDTO.getAddressId());
             update.getAddress().add(newAddress);
         }
-        update.setEmail(userRequestDTO.getEmail());
-        update.setGender(gender);
-        update.setPhoneNumber(userRequestDTO.getPhoneNumber());
-        update.setUserName(userRequestDTO.getUserName());
+        if (MyUtils.isNotEmptyAndNotNull(userRequestDTO.getEmail())) {
+            update.setEmail(userRequestDTO.getEmail());
+        }
+        if (MyUtils.isNotEmptyAndNotNull(userRequestDTO.getGender())) {
+            Gender gender = new StringToEnumConverter().convert(userRequestDTO.getGender()); //CONVERTS GENDER INPUT TO ENUM TYPE GENDER
+            update.setGender(gender);
+        }
+        if (userRequestDTO.getPhoneNumber() > 0) {
+            update.setPhoneNumber(userRequestDTO.getPhoneNumber());
+        }
+        if (MyUtils.isNotEmptyAndNotNull(userRequestDTO.getUserName())) {
+            update.setUserName(userRequestDTO.getUserName());
+        }
         userRepository.save(update);
 
         return Message.updated;
@@ -81,9 +101,23 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
     @Transactional
     @Override
     public String deleteUser(Long userid) {
-        userRepository.findById(userid).orElseThrow(()->new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER,userid)));
+        userRepository.findById(userid).orElseThrow(() -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER, userid)));
         userRepository.deleteById(userid);
         return Message.deleted;
+    }
+
+    @Override
+    public String addAddress(Long addressId, Long userId) {
+        Address address = addressService.getAddress(addressId);
+        this.getUser(userId).addAddress(address);
+        return Message.added(ResourceType.ADDRESS);
+    }
+
+    @Override
+    public String removeAddress(Long addressId, Long userId) {
+        Address address = addressService.getAddress(addressId);
+        this.getUser(userId).removeAddress(address);
+        return Message.removed(ResourceType.ADDRESS);
     }
 
     @Override

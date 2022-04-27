@@ -9,7 +9,6 @@ import com.finalyearproject.fyp.exceptionHandler.ResourceNotFoundException;
 import com.finalyearproject.fyp.mapper.ProductMapper;
 import com.finalyearproject.fyp.model.Category;
 import com.finalyearproject.fyp.model.Product;
-import com.finalyearproject.fyp.model.User;
 import com.finalyearproject.fyp.repository.ProductRepository;
 import com.finalyearproject.fyp.service.serviceInterface.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +49,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
     public ProductResponseDTO getProductById(Long productId) {
         return productRepository.findById(productId)
                 .map(productMapper::productToProductResponseDTO)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.PRODUCT, productId)));
-    }
-
-    @Override
-    public int getProductInventory(Long productId) {
-        return getProduct(productId).getInventoryQuantity();
+                .orElseThrow(() -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.PRODUCT, productId)));
     }
 
     @Transactional
@@ -140,6 +133,11 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public int getProductInventory(Long productId) {
+        return this.getProduct(productId).getInventoryQuantity();
+    }
+
     @Transactional
     @Override
     public String updateProduct(Long productId, ProductRequestDTO productRequestDTO) {
@@ -149,7 +147,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
         if (MyUtils.isNotEmptyAndNotNull(productRequestDTO.getName())) {
             update.setName(productRequestDTO.getName());
         }
-        if (productRequestDTO.getPrice() > -1) {
+        if (productRequestDTO.getPrice() > 0) {
             update.setPrice(productRequestDTO.getPrice());
         }
         if (MyUtils.isNotEmptyAndNotNull(productRequestDTO.getDescription())) {
@@ -158,10 +156,10 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
         if (MyUtils.isNotEmptyAndNotNull(productRequestDTO.getImageUrl())) {
             update.setImageUrl(productRequestDTO.getImageUrl());
         }
-        if (productRequestDTO.getCost() > -1) {
+        if (productRequestDTO.getCost() > 0) {
             update.setCost(productRequestDTO.getCost());
         }
-        if (productRequestDTO.getInventoryQuantity() > -1) {
+        if (productRequestDTO.getInventoryQuantity() > 0) {
             update.setInventoryQuantityBy(productRequestDTO.getInventoryQuantity());
         }
         /*

@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -46,13 +46,13 @@ public class ProductController{
     }
 
     @GetMapping("/product/inventory/{productId}")
-    public ResponseEntity<Integer> getProductInventory(@PathVariable("productId")@NotNull Long productId){
+    public ResponseEntity<Integer> getProductInventory(@PathVariable("productId")Long productId){
         return ResponseEntity.ok(productService.getProductInventory(productId));
     }
 
+
     @GetMapping("/products/between/{price1}/and/{price2}")
-    public ResponseEntity <List<ProductResponseDTO>> getProductByPriceRange(@PathVariable("price1") @NotNull int price,
-                                                                            @PathVariable("price2") @NotNull int price2){
+    public ResponseEntity <List<ProductResponseDTO>> getProductByPriceRange(@PathVariable("price1") int price, @PathVariable("price2") int price2){
         return ResponseEntity.ok(productService.getProductByPriceRange(price, price2));
     }
     @PutMapping("/product/{id}")
@@ -63,6 +63,44 @@ public class ProductController{
     @DeleteMapping("/product/{id}")
     public String deleteProduct(@PathVariable("id") Long productId){
         return productService.deleteProduct(productId);
+    }
+
+    @PostMapping("/add/category/{categoryId}/to/product/{productId}")
+    public ResponseEntity<String> addCategory(@PathVariable("categoryId") Long categoryId, @PathVariable("productId") Long productId){
+        return ResponseEntity.ok(productService.addCategory(productId,categoryId));
+    }
+
+    @PostMapping("/remove/category/{categoryId}/from/product/{productId}")
+    public ResponseEntity<String> removeCategory(@PathVariable("categoryId") Long categoryId, @PathVariable("productId") Long productId){
+        return ResponseEntity.ok(productService.removeCategory(productId,categoryId));
+    }
+
+    @PostMapping("/set/product/{productId}/to/inventory/{quantity}")
+    public ResponseEntity<String> setInventoryQuantity(@PathVariable("productId") Long productId,
+                                                       @PathVariable("quantity") Integer quantity){
+        return ResponseEntity.ok(productService.setInventoryQuantity(productId,quantity));
+    }
+
+    @PostMapping("/add/categories/to/product/{productId}")
+    public ResponseEntity<String> addCategories(@RequestBody List<Long> categoryIds, @PathVariable("productId") Long productId){
+        return ResponseEntity.ok(productService.addCategories(productId,categoryIds));
+    }
+
+    @PostMapping("/remove/categories/from/product/{productId}")
+    public ResponseEntity<String> removeCategories(@RequestBody List<Long> categoryIds, @PathVariable("productId") Long productId){
+        return ResponseEntity.ok(productService.removeCategories(productId,categoryIds));
+    }
+
+    @PostMapping("/add/inventory/{quantity}/to/product/{productId}")
+    public ResponseEntity<String> addInventoryQuantity(@PathVariable("productId") Long productId,
+                                                       @PathVariable("quantity") Integer quantity){
+        return ResponseEntity.ok(productService.addInventoryQuantity(productId,quantity));
+    }
+
+    @PostMapping("/reduce/inventory/{quantity}/from/product/{productId}")
+    public ResponseEntity<String> reduceInventoryQuantity(@PathVariable("productId") Long productId,
+                                                       @PathVariable("quantity") Integer quantity){
+        return ResponseEntity.ok(productService.reduceInventoryQuantity(productId,quantity));
     }
 
 }
