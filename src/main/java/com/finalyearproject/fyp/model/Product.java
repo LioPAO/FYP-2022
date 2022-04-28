@@ -59,7 +59,7 @@ public class Product implements Comparable<Product> {
 
     public void subtractInventoryQuantityBy(int productQuantity) {
         int newQuantity = inventory.getQuantity() - productQuantity;
-        if(newQuantity<0) throw new OutOfBoundsException("GIVEN QUANTITY SETS INVENTORY BELOW 0");
+        if(newQuantity<0) throw new OutOfBoundsException("GIVEN QUANTITY: "+productQuantity+" SETS INVENTORY BELOW 0 NEW QUANTITY: "+newQuantity);
         inventory.setQuantity(newQuantity);
     }
 
