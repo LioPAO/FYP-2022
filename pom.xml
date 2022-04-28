@@ -24,6 +24,7 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!--Dependencies for testing JUNIT5-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -35,17 +36,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
         <!-- Use MySQL Connector-J -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+
         <!--Validation helps us validate data from input-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
             <version>2.6.7</version>
         </dependency>
+
         <!--DevTools is used to refresh project anytime changes are made without having to on and off server-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -54,10 +58,11 @@
             <optional>true</optional>
         </dependency>
 
-        <!--<dependency>
+        <!--Redis used for caching the data-->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>-->
+        </dependency>
 
         <!--H2 database is used for testing-->
         <dependency>
@@ -66,18 +71,22 @@
             <scope>test</scope>
         </dependency>
 
+        <!--Lombok used to reduce boiler plate code-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
+        <!--MapStruct used to automate mapping of DTOs-->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
         </dependency>
     </dependencies>
+
+    <!--===============================================BUILD==========================================================================-->
 
     <build>
         <plugins>

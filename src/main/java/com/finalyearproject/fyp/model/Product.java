@@ -34,7 +34,7 @@ public class Product implements Comparable<Product> {
     private String imageUrl;
     private int cost;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)// TODO: 4/28/2022 study the effect of cascade all and cascade.something
     @JoinColumn(name = "inventory_id")
     private ProductInventory inventory;
 
@@ -43,7 +43,7 @@ public class Product implements Comparable<Product> {
             CascadeType.MERGE
     }, fetch = FetchType.LAZY)
     @JoinTable(name = "Product_Category", joinColumns = {@JoinColumn(name = "product_id")}, inverseJoinColumns = {@JoinColumn(name = "category_id")})
-    private Set<Category> category = new TreeSet<>();
+    private Set<Category> category;
 
     public Product(ProductRequestDTO productRequestDTO) {
         this.inventory = new ProductInventory();
@@ -53,6 +53,7 @@ public class Product implements Comparable<Product> {
         this.description = productRequestDTO.getDescription();
         this.imageUrl = productRequestDTO.getImageUrl();
         this.cost = productRequestDTO.getCost();
+        this.category= new TreeSet<>();
     }
 
     public int addInventoryQuantityBy(int productQuantity) {

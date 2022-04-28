@@ -11,5 +11,7 @@ public enum ResourceType {
     SELLERS,
     GENDER,
     ADDRESS,
-    ADDRESSES
+    ADDRESSES,
+    WISH,
+    WISHES
 }

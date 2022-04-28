@@ -52,7 +52,11 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Set<Address> address;
+    @OneToMany(mappedBy = "user")
+    @Column(name="wishes")
+    private Set<Wish> wishes;
 
+    //CONSTRUCTOR
     public User(UserRequestDTO userRequestDTO) {
 
         Gender gender= new StringToEnumConverter().convert(userRequestDTO.getGender()); //CONVERTS GENDER INPUT TO ENUM TYPE GENDER

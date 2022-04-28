@@ -10,10 +10,7 @@ import javax.validation.constraints.NotNull;
 public class AddressResponseDTO {
 
     private Long id;
-    @NotNull
     private String state;
-    @NotNull
     private String city;
-    @NotNull
     private String street;
 }

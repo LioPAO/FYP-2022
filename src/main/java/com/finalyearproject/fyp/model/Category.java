@@ -12,7 +12,7 @@ import java.util.TreeSet;
 @Setter
 @NoArgsConstructor
 @Table(name= "CATEGORY")
-public class Category {
+public class Category implements Comparable<Category>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +29,8 @@ public class Category {
     }, fetch = FetchType.LAZY)
     private Set<Product> products = new TreeSet<>();
 
+    @Override
+    public int compareTo(Category o) {
+        return (int) (o.getId()-this.getId());
+    }
 }
