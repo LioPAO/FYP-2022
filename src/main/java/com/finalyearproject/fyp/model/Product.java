@@ -34,11 +34,12 @@ public class Product implements Comparable<Product> {
     private String imageUrl;
     private int cost;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)// TODO: 4/28/2022 study the effect of cascade all and cascade.something
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+// TODO: 4/28/2022 study the effect of cascade all and cascade.something
     @JoinColumn(name = "inventory_id")
     private ProductInventory inventory;
 
-    @ManyToMany(cascade =  {
+    @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
     }, fetch = FetchType.LAZY)
@@ -53,7 +54,7 @@ public class Product implements Comparable<Product> {
         this.description = productRequestDTO.getDescription();
         this.imageUrl = productRequestDTO.getImageUrl();
         this.cost = productRequestDTO.getCost();
-        this.category= new TreeSet<>();
+        this.category = new TreeSet<>();
     }
 
     public int addInventoryQuantityBy(int productQuantity) {
@@ -64,7 +65,8 @@ public class Product implements Comparable<Product> {
 
     public int subtractInventoryQuantityBy(int productQuantity) {
         int newQuantity = inventory.getQuantity() - productQuantity;
-        if(newQuantity<0) throw new OutOfBoundsException("GIVEN QUANTITY: "+productQuantity+" SETS INVENTORY BELOW 0 -NEW QUANTITY: "+newQuantity);
+        if (newQuantity < 0)
+            throw new OutOfBoundsException("GIVEN QUANTITY: " + productQuantity + " SETS INVENTORY BELOW 0 -NEW QUANTITY: " + newQuantity);
         inventory.setQuantity(newQuantity);
         return newQuantity;
     }
@@ -79,18 +81,20 @@ public class Product implements Comparable<Product> {
     }
 
     public void removeCategory(Category category) {
-        if(!this.category.contains(category)) {
+        if (!this.category.contains(category)) {
             throw new ResourceNotFoundException(Message.resourceNotFound(ResourceType.CATEGORY, category.getId()));
         }
         this.category.remove(category);
         category.getProducts().remove(this);
     }
 
-    public Set<Category> getCategory(){
-         return this.category;
+    public Set<Category> getCategory() {
+        return this.category;
     }
 
-    public void setInventoryQuantityBy(int productQuantity) {inventory.setQuantity(productQuantity);}
+    public void setInventoryQuantityBy(int productQuantity) {
+        inventory.setQuantity(productQuantity);
+    }
 
     @Override
     public int compareTo(Product o) {
