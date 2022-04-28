@@ -4,8 +4,10 @@ import com.finalyearproject.fyp.common.Message;
 import com.finalyearproject.fyp.common.MyUtils;
 import com.finalyearproject.fyp.common.ResourceType;
 import com.finalyearproject.fyp.dto.Request.ProductRequestDTO;
+import com.finalyearproject.fyp.dto.Response.CategoryResponseDTO;
 import com.finalyearproject.fyp.dto.Response.ProductResponseDTO;
 import com.finalyearproject.fyp.exceptionHandler.ResourceNotFoundException;
+import com.finalyearproject.fyp.mapper.CategoryMapper;
 import com.finalyearproject.fyp.mapper.ProductMapper;
 import com.finalyearproject.fyp.model.Category;
 import com.finalyearproject.fyp.model.Product;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,12 +27,14 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final ProductMapper productMapper;
+    private final CategoryMapper categoryMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService, ProductMapper productMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryService categoryService, ProductMapper productMapper, CategoryMapper categoryMapper) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
         this.productMapper = productMapper;
+        this.categoryMapper = categoryMapper;
     }
 
     @Transactional
@@ -52,7 +57,6 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
                 .orElseThrow(() -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.PRODUCT, productId)));
     }
 
-    @Transactional
     @Override
     public String deleteProduct(Long id) {
         this.getProduct(id);
@@ -69,50 +73,72 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
     @Override
     public String addCategory(Long productId, Long categoryId) {
         Category category = categoryService.getCategory(categoryId);
-        getProduct(productId).addCategory(category);
+        Product product = this.getProduct(productId);
+        product.addCategory(category);
+        productRepository.save(product);
         return Message.added(ResourceType.CATEGORY);
     }
 
     @Override
     public String removeCategory(Long productId, Long categoryId) {
         Category category = categoryService.getCategory(categoryId);
-        getProduct(productId).removeCategory(category);
+        Product product = this.getProduct(productId);
+        product.removeCategory(category);
+        productRepository.save(product);
         return Message.removed(ResourceType.CATEGORY);
     }
 
     @Override
-    public String setInventoryQuantity(Long productId, int quantity) {
-        getProduct(productId).setInventoryQuantityBy(quantity);
-        return "QUANTITY " + Message.updated;
+    public Set<CategoryResponseDTO> getCategory(Long productId) {
+        return this.getProduct(productId)
+                .getCategory()
+                .stream().map(categoryMapper::categoryToCategoryResponseDTO)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Integer setInventoryQuantity(Long productId, int quantity) {
+        Product product = this.getProduct(productId);
+                product.setInventoryQuantityBy(quantity);
+        productRepository.save(product);
+        return quantity;
     }
 
     @Override
     public String addCategories(Long productId, List<Long> categoryId) {
         if (!categoryId.isEmpty()) {
             categoryId.forEach(id -> addCategory(productId, id));
+            return Message.added(ResourceType.CATEGORIES);
+        }else {
+            return Message.isEmpty(ResourceType.CATEGORY.toString());
         }
-        return Message.added(ResourceType.CATEGORIES);
     }
 
     @Override
     public String removeCategories(Long productId, List<Long> categoryId) {
         if (!categoryId.isEmpty()) {
             categoryId.forEach(id -> removeCategory(productId, id));
+            return Message.removed(ResourceType.CATEGORIES);
+        }else {
+            return Message.isEmpty(ResourceType.CATEGORY.toString());
         }
-        return Message.removed(ResourceType.CATEGORIES);
     }
 
     @Transactional
     @Override
-    public String addInventoryQuantity(Long productId, int quantity) {
-        this.getProduct(productId).addInventoryQuantityBy(quantity);
-        return "QUANTITY " + Message.updated;
+    public Integer addInventoryQuantity(Long productId, int quantity) {
+        Product product= this.getProduct(productId);
+        product.addInventoryQuantityBy(quantity);
+        productRepository.save(product);
+        return quantity;
     }
 
     @Override
-    public String reduceInventoryQuantity(Long productId, int quantity) {
-        this.getProduct(productId).subtractInventoryQuantityBy(quantity);
-        return "QUANTITY " + Message.updated;
+    public Integer reduceInventoryQuantity(Long productId, int quantity) {
+        Product product= this.getProduct(productId);
+        product.subtractInventoryQuantityBy(quantity);
+        productRepository.save(product);
+        return quantity;
     }
 
     @Override
@@ -134,7 +160,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
     }
 
     @Override
-    public int getProductInventory(Long productId) {
+    public Integer getProductInventory(Long productId) {
         return this.getProduct(productId).getInventoryQuantity();
     }
 

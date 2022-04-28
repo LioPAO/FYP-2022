@@ -13,7 +13,7 @@ public class Message {
         return resourceType +": " + id+ " NOT FOUND";
     }
 
-    public static String fieldNotEmpty(String field){ return field.toUpperCase() + "CANNOT BE EMPTY"; }
+    public static String isEmpty(String field){ return field.toUpperCase() + " IS EMPTY"; }
 
     public static String updated(ResourceType resourceType){ return resourceType +" " + updated;}
 

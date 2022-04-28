@@ -23,11 +23,10 @@ public class Category {
     private String name;
     private String description;
     private String imageUrl;
-    @ManyToMany(mappedBy = "category",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Product> product = new TreeSet<>();
+    @ManyToMany(mappedBy = "category",cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    }, fetch = FetchType.LAZY)
+    private Set<Product> products = new TreeSet<>();
 
-    public void addProduct(Product product) {this.product.add(product);}
-
-    public void removeProduct(Product product) {this.product.remove(product);
-    }
 }

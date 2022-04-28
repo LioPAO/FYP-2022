@@ -1,11 +1,13 @@
 package com.finalyearproject.fyp.service.serviceInterface;
 
 import com.finalyearproject.fyp.dto.Request.ProductRequestDTO;
+import com.finalyearproject.fyp.dto.Response.CategoryResponseDTO;
 import com.finalyearproject.fyp.dto.Response.ProductResponseDTO;
 import com.finalyearproject.fyp.model.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface ProductService {
@@ -16,7 +18,7 @@ public interface ProductService {
 
     ProductResponseDTO getProductById(Long productId);
 
-    int getProductInventory(Long productId);
+    Integer getProductInventory(Long productId);
 
     List<ProductResponseDTO> getAllProduct();
 
@@ -32,15 +34,17 @@ public interface ProductService {
 
     String removeCategory(Long productId, Long categoryId);
 
-    String setInventoryQuantity(Long productId, int quantity);
+    Set<CategoryResponseDTO> getCategory(Long productId);
+
+    Integer setInventoryQuantity(Long productId, int quantity);
 
     String addCategories(Long productId, List <Long> categoryId);
 
     String removeCategories(Long productId, List <Long> categoryId);
 
-    String addInventoryQuantity(Long productId, int quantity);
+    Integer addInventoryQuantity(Long productId, int quantity);
 
-    String reduceInventoryQuantity(Long productId, int quantity);
+    Integer reduceInventoryQuantity(Long productId, int quantity);
 
 
 }

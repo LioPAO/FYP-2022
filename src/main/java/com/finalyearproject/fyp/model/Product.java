@@ -1,6 +1,7 @@
 package com.finalyearproject.fyp.model;
 
 import com.finalyearproject.fyp.dto.Request.ProductRequestDTO;
+import com.finalyearproject.fyp.exceptionHandler.OutOfBoundsException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,13 +31,16 @@ public class Product implements Comparable<Product> {
     private String imageUrl;
     private int cost;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "inventory_id")
     private ProductInventory inventory;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade =  {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    }, fetch = FetchType.LAZY)
     @JoinTable(name = "Product_Category", joinColumns = {@JoinColumn(name = "product_id")}, inverseJoinColumns = {@JoinColumn(name = "category_id")})
-    private Set<Category> category;
+    private Set<Category> category = new TreeSet<>();
 
     public Product(ProductRequestDTO productRequestDTO) {
         this.inventory = new ProductInventory();
@@ -46,7 +50,6 @@ public class Product implements Comparable<Product> {
         this.description = productRequestDTO.getDescription();
         this.imageUrl = productRequestDTO.getImageUrl();
         this.cost = productRequestDTO.getCost();
-        this.category = new TreeSet<>();
     }
 
     public void addInventoryQuantityBy(int productQuantity) {
@@ -56,6 +59,7 @@ public class Product implements Comparable<Product> {
 
     public void subtractInventoryQuantityBy(int productQuantity) {
         int newQuantity = inventory.getQuantity() - productQuantity;
+        if(newQuantity<0) throw new OutOfBoundsException("GIVEN QUANTITY SETS INVENTORY BELOW 0");
         inventory.setQuantity(newQuantity);
     }
 
@@ -63,9 +67,21 @@ public class Product implements Comparable<Product> {
         return inventory.getQuantity();
     }
 
-    public void addCategory(Category category) {this.category.add(category);}
+    public void addCategory(Category category) {
+        this.category.add(category);
+        category.getProducts().add(this);
+        this.category.forEach(System.out::println);
+    }
 
-    public void removeCategory(Category category) {this.category.remove(category);}
+    public void removeCategory(Category category) {
+        this.category.remove(category);
+        category.getProducts().remove(this);
+        this.category.forEach(System.out::println);
+    }
+
+    public Set<Category> getCategory(){
+         return this.category;
+    }
 
     public void setInventoryQuantityBy(int productQuantity) {inventory.setQuantity(productQuantity);}
 

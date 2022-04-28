@@ -40,4 +40,9 @@ public class GlobalExceptionHandler {
                     new ExceptionErrorMessage(Message.invalidInput,request.getServletPath(), bindingDetails),
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(OutOfBoundsException.class)
+    public ResponseEntity<ExceptionErrorMessage> notFoundException(OutOfBoundsException exception, HttpServletRequest request){
+        return new ResponseEntity(new ExceptionErrorMessage(exception.getMessage(), request.getServletPath()),HttpStatus.BAD_REQUEST);
+    }
 }
