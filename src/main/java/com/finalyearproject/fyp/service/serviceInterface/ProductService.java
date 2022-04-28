@@ -30,21 +30,24 @@ public interface ProductService {
 
     String deleteProduct(Long productId);
 
-    String addCategory(Long productId, Long categoryId);
-
-    String removeCategory(Long productId, Long categoryId);
-
-    Set<CategoryResponseDTO> getCategory(Long productId);
+    //INVENTORY================================================================
 
     Integer setInventoryQuantity(Long productId, int quantity);
-
-    String addCategories(Long productId, List <Long> categoryId);
-
-    String removeCategories(Long productId, List <Long> categoryId);
 
     Integer addInventoryQuantity(Long productId, int quantity);
 
     Integer reduceInventoryQuantity(Long productId, int quantity);
 
+    //CATEGORY==================================================================================
+
+    Set<CategoryResponseDTO> getCategory(Long productId);
+
+    String addCategories(Long productId, List <Long> categoryId);
+
+    String addCategory(Long productId, Long categoryId);
+
+    String removeCategories(Long productId, List <Long> categoryId);
+
+    String removeCategory(Long productId, Long categoryId);
 
 }

@@ -44,11 +44,6 @@ public class ProductController{
         return ResponseEntity.ok(productService.getProductByName(productName));
     }
 
-    @GetMapping("/product/inventory/{productId}")
-    public ResponseEntity<Integer> getProductInventory(@PathVariable("productId")Long productId){
-        return ResponseEntity.ok(productService.getProductInventory(productId));
-    }
-
     @GetMapping("/products/between/{price1}/and/{price2}")
     public ResponseEntity <List<ProductResponseDTO>> getProductByPriceRange(@PathVariable("price1") int price, @PathVariable("price2") int price2){
         return ResponseEntity.ok(productService.getProductByPriceRange(price, price2));
@@ -90,6 +85,11 @@ public class ProductController{
     }
 
     //INVENTORY===============================================================================================
+    @GetMapping("/product/inventory/{productId}")
+    public ResponseEntity<Integer> getProductInventory(@PathVariable("productId")Long productId){
+        return ResponseEntity.ok(productService.getProductInventory(productId));
+    }
+
     @PostMapping("/add/inventory/{quantity}/to/product/{productId}")
     public ResponseEntity<Integer> addInventoryQuantity(@PathVariable("productId") Long productId,
                                                                    @PathVariable("quantity") Integer quantity){

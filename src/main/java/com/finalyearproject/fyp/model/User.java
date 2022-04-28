@@ -1,8 +1,11 @@
 package com.finalyearproject.fyp.model;
 
 import com.finalyearproject.fyp.common.Gender;
+import com.finalyearproject.fyp.common.Message;
+import com.finalyearproject.fyp.common.ResourceType;
 import com.finalyearproject.fyp.config.StringToEnumConverter;
 import com.finalyearproject.fyp.dto.Request.UserRequestDTO;
+import com.finalyearproject.fyp.exceptionHandler.ResourceNotFoundException;
 import lombok.*;
 
 import javax.persistence.*;
@@ -48,7 +51,7 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private Set<Address> address = new TreeSet<>();
+    private Set<Address> address;
 
     public User(UserRequestDTO userRequestDTO) {
 
@@ -64,13 +67,17 @@ public class User {
         this.dateOfBirth = LocalDate.parse(userRequestDTO.getDateOfBirth());
         this.joinedOn = LocalDate.now();
         this.age = Period.between(  this.dateOfBirth,LocalDate.now()).getYears();
+        this.address = new TreeSet<>();
     }
 
     public void addAddress(Address address){
-        getAddress().add(address);
+        this.getAddress().add(address);
     }
     public void removeAddress(Address address){
-        getAddress().remove(address);
+        if(!this.address.contains(address)){
+            throw new ResourceNotFoundException(Message.resourceNotFound(ResourceType.ADDRESS,address.getId()));
+        }
+        this.getAddress().remove(address);
     }
     public int getAge() {
         return Period.between(  this.dateOfBirth,LocalDate.now()).getYears();

@@ -1,7 +1,10 @@
 package com.finalyearproject.fyp.model;
 
+import com.finalyearproject.fyp.common.Message;
+import com.finalyearproject.fyp.common.ResourceType;
 import com.finalyearproject.fyp.dto.Request.ProductRequestDTO;
 import com.finalyearproject.fyp.exceptionHandler.OutOfBoundsException;
+import com.finalyearproject.fyp.exceptionHandler.ResourceNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,15 +55,17 @@ public class Product implements Comparable<Product> {
         this.cost = productRequestDTO.getCost();
     }
 
-    public void addInventoryQuantityBy(int productQuantity) {
+    public int addInventoryQuantityBy(int productQuantity) {
         int newQuantity = inventory.getQuantity() + productQuantity;
         inventory.setQuantity(newQuantity);
+        return newQuantity;
     }
 
-    public void subtractInventoryQuantityBy(int productQuantity) {
+    public int subtractInventoryQuantityBy(int productQuantity) {
         int newQuantity = inventory.getQuantity() - productQuantity;
-        if(newQuantity<0) throw new OutOfBoundsException("GIVEN QUANTITY: "+productQuantity+" SETS INVENTORY BELOW 0 NEW QUANTITY: "+newQuantity);
+        if(newQuantity<0) throw new OutOfBoundsException("GIVEN QUANTITY: "+productQuantity+" SETS INVENTORY BELOW 0 -NEW QUANTITY: "+newQuantity);
         inventory.setQuantity(newQuantity);
+        return newQuantity;
     }
 
     public int getInventoryQuantity() {
@@ -70,13 +75,14 @@ public class Product implements Comparable<Product> {
     public void addCategory(Category category) {
         this.category.add(category);
         category.getProducts().add(this);
-        this.category.forEach(System.out::println);
     }
 
     public void removeCategory(Category category) {
+        if(!this.category.contains(category)) {
+            throw new ResourceNotFoundException(Message.resourceNotFound(ResourceType.CATEGORY, category.getId()));
+        }
         this.category.remove(category);
         category.getProducts().remove(this);
-        this.category.forEach(System.out::println);
     }
 
     public Set<Category> getCategory(){

@@ -128,17 +128,17 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
     @Override
     public Integer addInventoryQuantity(Long productId, int quantity) {
         Product product= this.getProduct(productId);
-        product.addInventoryQuantityBy(quantity);
+        int newQuantity = product.addInventoryQuantityBy(quantity);
         productRepository.save(product);
-        return quantity;
+        return newQuantity;
     }
 
     @Override
     public Integer reduceInventoryQuantity(Long productId, int quantity) {
         Product product= this.getProduct(productId);
-        product.subtractInventoryQuantityBy(quantity);
+        int newQuantity = product.subtractInventoryQuantityBy(quantity);
         productRepository.save(product);
-        return quantity;
+        return newQuantity;
     }
 
     @Override
