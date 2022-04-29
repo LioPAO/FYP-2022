@@ -56,13 +56,13 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<AddressResponseDTO> getAddressByState(String state) {
         // TODO: 4/27/2022 Write Query to search by name. Do same for other entities
         return addressRepository.findAddressByState(state)
                 .stream()
                 .map(addressMapper::addressToAddressResponseDTO)
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -85,16 +85,18 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
         addressRepository.save(update);
         return Message.updated(ResourceType.ADDRESS);
     }
+
     @Transactional
     @Override
-    public String deleteAddress(Long id) {
+    public String deleteAllAddress(Long id) {
         this.getAddress(id);
         addressRepository.deleteById(id);
         return Message.deleted(ResourceType.ADDRESS);
     }
 
+    @Transactional
     @Override
-    public String deleteAddress() {
+    public String deleteAllAddress() {
         addressRepository.deleteAll();
         return Message.deleted(ResourceType.ADDRESSES);
     }

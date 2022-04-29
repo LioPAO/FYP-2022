@@ -58,12 +58,12 @@ public class AddressController {
     //DELETE USER
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable("id") Long id){
-        return addressService.deleteAddress(id);
+        return addressService.deleteAllAddress(id);
     }
 
 
     @DeleteMapping("/")
     public String deleteUser(){
-        return addressService.deleteAddress();
+        return addressService.deleteAllAddress();
     }
 }

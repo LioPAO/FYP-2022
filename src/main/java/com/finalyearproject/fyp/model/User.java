@@ -49,9 +49,12 @@ public class User {
     @Setter(AccessLevel.NONE)
     private LocalDate joinedOn;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "user_address",
+            joinColumns = {@JoinColumn(name="user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "address_id")})
     private Set<Address> address;
+
     @OneToMany(mappedBy = "user")
     @Column(name="wishes")
     private Set<Wish> wishes;

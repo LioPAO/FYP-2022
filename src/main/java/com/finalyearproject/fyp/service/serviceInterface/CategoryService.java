@@ -5,11 +5,13 @@ import com.finalyearproject.fyp.dto.Response.CategoryResponseDTO;
 import com.finalyearproject.fyp.model.Category;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 public interface CategoryService {
 
+    @Transactional
     CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO);
 
     Category getCategory(Long id);
@@ -20,15 +22,9 @@ public interface CategoryService {
 
     List<CategoryResponseDTO> getCategoryByName(String name);
 
+    @Transactional
     String updateCategory(Long id, CategoryRequestDTO category);
 
+    @Transactional
     String deleteCategory(Long Id);
-
-//    String addProduct(Long categoryId, Long productId);
-//
-//    String removeProduct(Long categoryId, Long productId);
-//
-//    String addProducts(Long categoryId, List<Long> productIdList);
-//
-//    String removeProducts(Long categoryId, List<Long> productIdList);
 }

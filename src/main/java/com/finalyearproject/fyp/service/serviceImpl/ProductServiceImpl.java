@@ -57,6 +57,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
                 .orElseThrow(() -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.PRODUCT, productId)));
     }
 
+    @Transactional
     @Override
     public String deleteProduct(Long id) {
         this.getProduct(id);
@@ -70,6 +71,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
                 () -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.PRODUCT, productId)));
     }
 
+    @Transactional
     @Override
     public String addCategory(Long productId, Long categoryId) {
         Category category = categoryService.getCategory(categoryId);
@@ -79,6 +81,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
         return Message.added(ResourceType.CATEGORY);
     }
 
+    @Transactional
     @Override
     public String removeCategory(Long productId, Long categoryId) {
         Category category = categoryService.getCategory(categoryId);
@@ -96,6 +99,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
                 .collect(Collectors.toSet());
     }
 
+    @Transactional
     @Override
     public Integer setInventoryQuantity(Long productId, int quantity) {
         Product product = this.getProduct(productId);
@@ -104,6 +108,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
         return quantity;
     }
 
+    @Transactional
     @Override
     public String addCategories(Long productId, List<Long> categoryId) {
         if (!categoryId.isEmpty()) {
@@ -114,6 +119,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
         }
     }
 
+    @Transactional
     @Override
     public String removeCategories(Long productId, List<Long> categoryId) {
         if (!categoryId.isEmpty()) {
@@ -133,6 +139,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
         return newQuantity;
     }
 
+    @Transactional
     @Override
     public Integer reduceInventoryQuantity(Long productId, int quantity) {
         Product product= this.getProduct(productId);

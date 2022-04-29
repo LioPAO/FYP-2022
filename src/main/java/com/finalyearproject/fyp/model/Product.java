@@ -82,7 +82,7 @@ public class Product implements Comparable<Product> {
 
     public void removeCategory(Category category) {
         if (!this.category.contains(category)) {
-            throw new ResourceNotFoundException(Message.resourceNotFound(ResourceType.CATEGORY, category.getId()));
+            throw new ResourceNotFoundException(Message.resourceNotFound(ResourceType.CATEGORY, category.getId()) + " AMONG CATEGORIES IN PRODUCT ID: " + this.getId());
         }
         this.category.remove(category);
         category.getProducts().remove(this);

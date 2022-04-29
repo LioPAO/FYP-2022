@@ -40,6 +40,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
         this.userMapper = userMapper;
     }
 
+    @Transactional
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
         User user = new User(userRequestDTO);
@@ -66,6 +67,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
 
     }
 
+    @Transactional
     @Override
     public String updateUser(Long id, UserRequestDTO userRequestDTO) {
         User update = userRepository.findById(id).orElseThrow(
@@ -132,6 +134,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
     }
 
     //ADDRESS ===========================================================================
+    @Transactional
     @Override
     public String addAddress(Long addressId, Long userId) {
         Address address = addressService.getAddress(addressId);
@@ -141,6 +144,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
         return Message.added(ResourceType.ADDRESS);
     }
 
+    @Transactional
     @Override
     public String addAddresses(List<Long> addressIds, Long userId) {
         if (!addressIds.isEmpty()) {
@@ -151,6 +155,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
         }
     }
 
+    @Transactional
     @Override
     public String removeAddress(Long addressId, Long userId) {
         Address address = addressService.getAddress(addressId);
@@ -160,6 +165,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
         return Message.removed(ResourceType.ADDRESS);
     }
 
+    @Transactional
     @Override
     public String removeAddress(List<Long> addressIds, Long userId) {
         if (!addressIds.isEmpty()) {
@@ -178,5 +184,4 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
                 .map(addressMapper::addressToAddressResponseDTO)
                 .collect(Collectors.toSet());
     }
-
 }

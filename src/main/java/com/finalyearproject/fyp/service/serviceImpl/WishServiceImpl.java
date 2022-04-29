@@ -16,6 +16,7 @@ import com.finalyearproject.fyp.service.serviceInterface.WishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ public class WishServiceImpl implements WishService {
         this.productService = productService;
     }
 
+    @Transactional
     @Override
     public WishResponseDTO createWish(WishRequestDTO wishRequestDTO) {
         User user = userService.getUser(wishRequestDTO.getUserId());
@@ -63,6 +65,7 @@ public class WishServiceImpl implements WishService {
                .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public String remove(Long wishId) {
         Wish wish = this.getWish(wishId);

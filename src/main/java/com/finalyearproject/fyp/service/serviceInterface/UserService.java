@@ -6,6 +6,7 @@ import com.finalyearproject.fyp.dto.Response.UserResponseDTO;
 import com.finalyearproject.fyp.model.User;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -13,14 +14,17 @@ import java.util.Set;
 public interface UserService {
     List<UserResponseDTO> getAllUsers();
 
+    @Transactional
     UserResponseDTO createUser(UserRequestDTO userRequestDTO);
 
     User getUser(Long id);
 
     UserResponseDTO getUserById(Long id);
 
+    @Transactional
     String updateUser(Long id, UserRequestDTO userRequestDTO);
 
+    @Transactional
     String deleteUser(Long Id);
 
     List<UserResponseDTO> getUserByFirstName(String firstname);
@@ -31,12 +35,16 @@ public interface UserService {
 
     //ADDRESS=======================================================================
 
+    @Transactional
     String addAddress(Long addressId, Long userId);
 
+    @Transactional
     String addAddresses(List <Long> addressIds, Long userId);
 
+    @Transactional
     String removeAddress(Long addressId, Long userId) ;
 
+    @Transactional
     String removeAddress(List <Long> addressIds, Long userId);
 
     Set<AddressResponseDTO> getAddress(Long userId);

@@ -5,11 +5,13 @@ import com.finalyearproject.fyp.dto.Response.AddressResponseDTO;
 import com.finalyearproject.fyp.model.Address;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 public interface AddressService {
 
+    @Transactional
     AddressResponseDTO createAddress(AddressRequestDTO addressRequestDTO);
 
     List<AddressResponseDTO> getAllAddress();
@@ -22,9 +24,12 @@ public interface AddressService {
 
     List<AddressResponseDTO> getAddressByCity(String city);
 
+    @Transactional
     String updateAddress(Long id, AddressRequestDTO Address);
 
-    String deleteAddress(Long Id);
+    @Transactional
+    String deleteAllAddress(Long Id);
 
-    String deleteAddress();
+    @Transactional
+    String deleteAllAddress();
 }
