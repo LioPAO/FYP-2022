@@ -82,7 +82,7 @@ public class User {
     }
     public void removeAddress(Address address){
         if(!this.address.contains(address)){
-            throw new ResourceNotFoundException(Message.resourceNotFound(ResourceType.ADDRESS,address.getId()));
+            throw new ResourceNotFoundException(Message.resourceNotFound(ResourceType.ADDRESS,address.getId()) + " AMONG ADDRESSES IN USER   ID: " + this.getId());
         }
         this.getAddress().remove(address);
     }

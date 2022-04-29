@@ -10,6 +10,7 @@ import com.finalyearproject.fyp.mapper.AddressMapper;
 import com.finalyearproject.fyp.model.Address;
 import com.finalyearproject.fyp.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -39,8 +40,10 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
     public Address getAddress(Long id) {
         return addressRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException(Message.resourceNotFound(ResourceType.ADDRESS,id)));
+
     }
 
+    @Cacheable(value = "address",key = "#id")
     @Override
     public AddressResponseDTO getAddressById(Long id) {
         return addressRepository.findById(id)
@@ -75,9 +78,8 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
 
     @Transactional
     @Override
-    public String updateAddress(Long id, AddressRequestDTO addressRequestDTO) {
-        Address update = addressRepository.findById(id).orElseThrow(
-                ()->new ResourceNotFoundException(Message.resourceNotFound(ResourceType.ADDRESS,id)));
+    public String updateAddress(Long addressId, AddressRequestDTO addressRequestDTO) {
+        Address update = this.getAddress(addressId);
 
         if (MyUtils.isNotEmptyAndNotNull(addressRequestDTO.getCity())){update.setCity(addressRequestDTO.getCity());}
         if (MyUtils.isNotEmptyAndNotNull(addressRequestDTO.getState())){update.setState(addressRequestDTO.getState());}
