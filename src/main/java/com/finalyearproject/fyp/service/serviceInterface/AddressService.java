@@ -28,7 +28,7 @@ public interface AddressService {
     String updateAddress(Long id, AddressRequestDTO Address);
 
     @Transactional
-    String deleteAllAddress(Long Id);
+    String deleteAddressById(Long Id);
 
     @Transactional
     String deleteAllAddress();

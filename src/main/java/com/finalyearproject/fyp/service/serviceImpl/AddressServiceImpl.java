@@ -10,7 +10,10 @@ import com.finalyearproject.fyp.mapper.AddressMapper;
 import com.finalyearproject.fyp.model.Address;
 import com.finalyearproject.fyp.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,6 +33,7 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
 
     @Transactional
     @Override
+    @CacheEvict(value= "alladdress", allEntries= true)
     public AddressResponseDTO createAddress(AddressRequestDTO addressRequestDTO) {
         Address address = addressMapper.addressRequestDTOToAddress(addressRequestDTO);
         addressRepository.save(address);
@@ -43,16 +47,20 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
 
     }
 
-    @Cacheable(value = "address",key = "#id")
+
     @Override
+    @Cacheable(value= "address", key= "#id")
     public AddressResponseDTO getAddressById(Long id) {
+        System.out.println("======================================NOT CACHE========================================================");
         return addressRepository.findById(id)
                 .map(addressMapper::addressToAddressResponseDTO)
                 .orElseThrow(()->new ResourceNotFoundException(Message.resourceNotFound(ResourceType.ADDRESS,id)));
     }
 
     @Override
+    @Cacheable(value= "alladdress", unless= "#result.size() == 0")
     public List<AddressResponseDTO> getAllAddress(){
+        System.out.println("======================================NOT CACHE========================================================");
         return addressRepository.findAll()
                 .stream()
                 .map(addressMapper::addressToAddressResponseDTO)
@@ -78,6 +86,10 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
 
     @Transactional
     @Override
+    @Caching(
+            put= { @CachePut(value= "address", key= "#addressId") },
+            evict= { @CacheEvict(value= "alladdress", allEntries= true) }
+    )
     public String updateAddress(Long addressId, AddressRequestDTO addressRequestDTO) {
         Address update = this.getAddress(addressId);
 
@@ -90,7 +102,13 @@ public class AddressServiceImpl implements com.finalyearproject.fyp.service.serv
 
     @Transactional
     @Override
-    public String deleteAllAddress(Long id) {
+    @Caching(
+            evict= {
+                    @CacheEvict(value= "address", key= "#id"),
+                    @CacheEvict(value= "alladdress", allEntries= true)
+            }
+    )
+    public String deleteAddressById(Long id) {
         this.getAddress(id);
         addressRepository.deleteById(id);
         return Message.deleted(ResourceType.ADDRESS);
