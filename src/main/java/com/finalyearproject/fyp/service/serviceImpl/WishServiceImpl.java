@@ -91,7 +91,7 @@ public class WishServiceImpl implements WishService {
     @Override
     @Cacheable(value = "wishesPerUser", key= "#userId", unless = "#result.size() > 100")
     public List<WishResponseDTO> getWishByUser(Long userId) {
-        User user = userService.getUser(userId);
+        userService.getUser(userId);
         return wishRepository.findAllByUserId(userId)
                 .stream()
                 .map(WishMapper::wishToWishResponseDTO)

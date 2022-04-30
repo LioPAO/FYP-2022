@@ -84,7 +84,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
             put = {@CachePut(value = "user", key = "#id")},
             evict = {@CacheEvict(value = "allusers", allEntries = true)}
     )
-    public String updateUser(Long id, UserRequestDTO userRequestDTO) {
+    public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
         User update = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER, id)));
 
@@ -113,7 +113,9 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
         }
         userRepository.save(update);
 
-        return Message.updated;
+        System.out.println( Message.updated); // TODO: 4/30/2022 Use logs
+
+        return userMapper.userToUserResponseDTO(update);
     }
 
     @Transactional

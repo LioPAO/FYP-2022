@@ -22,7 +22,7 @@ public interface UserService {
     UserResponseDTO getUserById(Long id);
 
     @Transactional
-    String updateUser(Long id, UserRequestDTO userRequestDTO);
+    UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO);
 
     @Transactional
     String deleteUser(Long Id);

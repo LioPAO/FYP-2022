@@ -199,7 +199,7 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
             put = {@CachePut(value = "product", key = "#productId")},
             evict = {@CacheEvict(value = "allproduct", allEntries = true)}
     )
-    public String updateProduct(Long productId, ProductRequestDTO productRequestDTO) {
+    public ProductResponseDTO updateProduct(Long productId, ProductRequestDTO productRequestDTO) {
 
         Product update = getProduct(productId);
 
@@ -228,7 +228,9 @@ class ProductServiceImpl implements com.finalyearproject.fyp.service.serviceInte
          * */
         productRepository.save(update);
 
-        return Message.updated(ResourceType.PRODUCT);
+        System.out.println(Message.updated(ResourceType.PRODUCT));// TODO: 4/30/2022 Use logs
+
+        return productMapper.productToProductResponseDTO(update);
     }
 
 }

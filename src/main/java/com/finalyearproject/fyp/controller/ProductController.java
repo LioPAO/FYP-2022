@@ -49,7 +49,7 @@ public class ProductController{
         return ResponseEntity.ok(productService.getProductByPriceRange(price, price2));
     }
     @PutMapping("/product/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDTO productRequestDTO){
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDTO productRequestDTO){
         return ResponseEntity.ok(productService.updateProduct(id, productRequestDTO));
     }
 

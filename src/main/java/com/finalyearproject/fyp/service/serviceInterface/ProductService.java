@@ -29,7 +29,7 @@ public interface ProductService {
     List<ProductResponseDTO> getProductByPriceRange(int price, int price2);
 
     @Transactional
-    String updateProduct(Long productId, ProductRequestDTO productRequestDTO);
+    ProductResponseDTO updateProduct(Long productId, ProductRequestDTO productRequestDTO);
 
     @Transactional
     String deleteProduct(Long productId);
