@@ -23,7 +23,7 @@ public interface CategoryService {
     List<CategoryResponseDTO> getCategoryByName(String name);
 
     @Transactional
-    String updateCategory(Long id, CategoryRequestDTO category);
+    CategoryResponseDTO updateCategory(Long id, CategoryRequestDTO category);
 
     @Transactional
     String deleteCategory(Long Id);

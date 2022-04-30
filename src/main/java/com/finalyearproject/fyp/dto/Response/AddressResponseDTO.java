@@ -4,10 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
 @Setter
-public class AddressResponseDTO {
+public class AddressResponseDTO implements Serializable {
 
     private Long id;
     private String state;

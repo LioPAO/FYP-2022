@@ -16,6 +16,10 @@ import com.finalyearproject.fyp.model.User;
 import com.finalyearproject.fyp.repository.UserRepository;
 import com.finalyearproject.fyp.service.serviceInterface.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -40,14 +44,20 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
         this.userMapper = userMapper;
     }
 
+    //USER========================================================================================================================
     @Transactional
     @Override
+    @Caching(
+            put = {@CachePut(value = "user", key = "#result.id")},
+            evict = {@CacheEvict(value = "allusers", allEntries = true)}
+    )
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
         User user = new User(userRequestDTO);
         return userMapper.userToUserResponseDTO(userRepository.save(user));
     }
 
     @Override
+    @Cacheable(value = "allusers", unless = "#result.size() > 100")
     public List<UserResponseDTO> getAllUsers() {
         List<User> allUsers = userRepository.findAll();
         return allUsers.stream().map(userMapper::userToUserResponseDTO).collect(Collectors.toList());
@@ -60,6 +70,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
     }
 
     @Override
+    @Cacheable(value = "user", key = "#id ")
     public UserResponseDTO getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER, id)));
@@ -69,6 +80,10 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
 
     @Transactional
     @Override
+    @Caching(
+            put = {@CachePut(value = "user", key = "#id")},
+            evict = {@CacheEvict(value = "allusers", allEntries = true)}
+    )
     public String updateUser(Long id, UserRequestDTO userRequestDTO) {
         User update = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER, id)));
@@ -103,6 +118,9 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
 
     @Transactional
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#userid"),
+            @CacheEvict(value = "allusers", allEntries = true)})
     public String deleteUser(Long userid) {
         userRepository.findById(userid).orElseThrow(() -> new ResourceNotFoundException(Message.resourceNotFound(ResourceType.USER, userid)));
         userRepository.deleteById(userid);
@@ -136,6 +154,7 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
     //ADDRESS ===========================================================================
     @Transactional
     @Override
+    @CacheEvict(value = "useraddress", key = "#userId")
     public String addAddress(Long addressId, Long userId) {
         Address address = addressService.getAddress(addressId);
         User user = this.getUser(userId);
@@ -146,17 +165,19 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
 
     @Transactional
     @Override
+    @CacheEvict(value = "useraddress", key = "#userId")
     public String addAddresses(List<Long> addressIds, Long userId) {
         if (!addressIds.isEmpty()) {
             addressIds.forEach(id -> addAddress(id, userId));
             return Message.added(ResourceType.ADDRESSES);
-        }else {
+        } else {
             return Message.isEmpty(ResourceType.ADDRESS.toString());
         }
     }
 
     @Transactional
     @Override
+    @CacheEvict(value = "useraddress", key = "#userId")
     public String removeAddress(Long addressId, Long userId) {
         Address address = addressService.getAddress(addressId);
         User user = this.getUser(userId);
@@ -167,16 +188,18 @@ class UserServiceImpl implements com.finalyearproject.fyp.service.serviceInterfa
 
     @Transactional
     @Override
+    @CacheEvict(value = "useraddress", key = "#userId")
     public String removeAddress(List<Long> addressIds, Long userId) {
         if (!addressIds.isEmpty()) {
             addressIds.forEach(id -> removeAddress(id, userId));
             return Message.removed(ResourceType.ADDRESSES);
-        }else {
+        } else {
             return Message.isEmpty(ResourceType.ADDRESS.toString());
         }
     }
 
     @Override
+    @Cacheable(value = "useraddress", key = "#userId")
     public Set<AddressResponseDTO> getAddress(Long userId) {
         User user = this.getUser(userId);
         return user.getAddress()

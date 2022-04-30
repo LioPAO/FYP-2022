@@ -3,11 +3,13 @@ package com.finalyearproject.fyp.dto.Response;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Getter
 @Setter
-public class UserResponseDTO {
+public class UserResponseDTO implements Serializable {
 
     //USED TO EXPOSE "WANTED" DATA TO REST API
 

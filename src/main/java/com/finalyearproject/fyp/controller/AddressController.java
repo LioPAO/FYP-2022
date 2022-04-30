@@ -4,6 +4,7 @@ import com.finalyearproject.fyp.dto.Request.AddressRequestDTO;
 import com.finalyearproject.fyp.dto.Response.AddressResponseDTO;
 import com.finalyearproject.fyp.service.serviceInterface.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +52,7 @@ public class AddressController {
 
     //UPDATE USER
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable("id") Long id,   @RequestBody AddressRequestDTO addressRequestDTO){
+    public ResponseEntity<AddressResponseDTO> updateUser(@PathVariable("id") Long id,   @RequestBody AddressRequestDTO addressRequestDTO){
         return ResponseEntity.ok(addressService.updateAddress(id,addressRequestDTO));
     }
 
@@ -60,7 +61,6 @@ public class AddressController {
     public String deleteUser(@PathVariable("id") Long id){
         return addressService.deleteAddressById(id);
     }
-
 
     @DeleteMapping("/")
     public String deleteUser(){

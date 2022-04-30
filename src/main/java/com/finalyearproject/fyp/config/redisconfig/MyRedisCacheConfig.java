@@ -2,6 +2,7 @@ package com.finalyearproject.fyp.config.redisconfig;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -17,12 +18,13 @@ import java.util.Map;
 
 @Configuration
 @EnableConfigurationProperties(MyRedisCacheConfigurationProperties.class)
-public class MyRedisCacheConfig {
+public class MyRedisCacheConfig extends CachingConfigurerSupport {
 
 
     //A static method to create a RedisCacheConfiguration object with a set duration
+    //Thread.currentThread().getContextClassLoader() is used to avoid cast errors when deserializing
     private static RedisCacheConfiguration createRedisCacheConfiguration(Duration timeToLive) {
-        return RedisCacheConfiguration.defaultCacheConfig()
+        return RedisCacheConfiguration.defaultCacheConfig(Thread.currentThread().getContextClassLoader())
                 .entryTtl(timeToLive);
     }
 
@@ -60,13 +62,12 @@ public class MyRedisCacheConfig {
     /*
      * RedisCacheConfiguration is a bean used to store configuration
      * Multiple configuration beans can be created each containing different configuration properties
-     * These different configuration beans can then be used or paired with different cached "tables" i.e cacheable entities
+     * These different configuration beans can then be used or paired with different cached "tables" i.e. cacheable entities
      * These configuration beans will then have to be managed by a cacheManager.
      * */
     @Bean
     public RedisCacheConfiguration defaultRedisCacheConfiguration(MyRedisCacheConfigurationProperties redisProperties) {
         return createRedisCacheConfiguration(redisProperties.getTimeToLive());
-
     }
 
     @Bean
@@ -103,7 +104,7 @@ public class MyRedisCacheConfig {
     /**
      * 1. Application.yml or .properties - parameters initialised
      * 2. MyRedisCacheConfigurationProperties -  parameters declared and later binding
-     * 3. MyRedisCacheConfig -
+     * 3. MyRedisCacheConfig - extends CachingConfigurerSupport and  overrides the cacheManager method in order to assign our cacheManager as the one and only manager
      *  3.1.1 RedisStandaloneConfiguration - pass host and port params from 2.
      *     .2 LettuceConnectionFactory - create a connection using a connection factory object and pass in 3.1 to get the desired params
      *

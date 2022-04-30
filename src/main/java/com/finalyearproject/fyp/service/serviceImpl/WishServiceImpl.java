@@ -14,6 +14,10 @@ import com.finalyearproject.fyp.service.serviceInterface.ProductService;
 import com.finalyearproject.fyp.service.serviceInterface.UserService;
 import com.finalyearproject.fyp.service.serviceInterface.WishService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,6 +40,11 @@ public class WishServiceImpl implements WishService {
 
     @Transactional
     @Override
+    @Caching(
+            put = {@CachePut(value = "wish", key = "#result.id")},
+            evict = {@CacheEvict(value = "allwishes", allEntries = true),
+                    @CacheEvict(value ="wishesPerUser", allEntries = true)}
+    )
     public WishResponseDTO createWish(WishRequestDTO wishRequestDTO) {
         User user = userService.getUser(wishRequestDTO.getUserId());
         Product product = productService.getProduct(wishRequestDTO.getProductId());
@@ -51,6 +60,7 @@ public class WishServiceImpl implements WishService {
     }
 
     @Override
+    @Cacheable(value = "wish", key = "#wishId ")
     public WishResponseDTO getWishById(Long wishId) {
         return this.wishRepository.findById(wishId)
                 .map(WishMapper::wishToWishResponseDTO)
@@ -58,6 +68,7 @@ public class WishServiceImpl implements WishService {
     }
 
     @Override
+    @Cacheable(value = "allwishes", unless = "#result.size() > 100")
     public List<WishResponseDTO> getAll() {
        return wishRepository.findAll()
                .stream()
@@ -67,13 +78,18 @@ public class WishServiceImpl implements WishService {
 
     @Transactional
     @Override
-    public String remove(Long wishId) {
+    @Caching(evict = {
+            @CacheEvict(value = "wish", key = "#wishId"),
+            @CacheEvict(value = "allwishes", allEntries = true),
+            @CacheEvict(value ="wishesPerUser", allEntries = true)})
+    public String delete(Long wishId) {
         Wish wish = this.getWish(wishId);
         wishRepository.delete(wish);
         return Message.removed(ResourceType.WISH);
     }
 
     @Override
+    @Cacheable(value = "wishesPerUser", key= "#userId", unless = "#result.size() > 100")
     public List<WishResponseDTO> getWishByUser(Long userId) {
         User user = userService.getUser(userId);
         return wishRepository.findAllByUserId(userId)

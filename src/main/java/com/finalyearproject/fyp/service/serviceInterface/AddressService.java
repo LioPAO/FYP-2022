@@ -25,7 +25,7 @@ public interface AddressService {
     List<AddressResponseDTO> getAddressByCity(String city);
 
     @Transactional
-    String updateAddress(Long id, AddressRequestDTO Address);
+    AddressResponseDTO updateAddress(Long id, AddressRequestDTO Address);
 
     @Transactional
     String deleteAddressById(Long Id);

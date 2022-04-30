@@ -21,7 +21,7 @@ public interface WishService {
     List<WishResponseDTO> getAll();
 
     @Transactional
-    String remove(Long wishId);
+    String delete(Long wishId);
 
     List<WishResponseDTO> getWishByUser(Long userId);
 
