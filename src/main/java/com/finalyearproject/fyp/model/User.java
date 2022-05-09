@@ -56,8 +56,12 @@ public class User {
     private Set<Address> address;
 
     @OneToMany(mappedBy = "user")
-    @Column(name="wishes")
-    private Set<Wish> wishes;
+    @Column(name="wish")
+    private Set<Wish> wish;
+
+    @OneToMany(mappedBy = "user")
+    @Column(name="cart_Item")
+    private Set<CartItem> cartItem;
 
     //CONSTRUCTOR
     public User(UserRequestDTO userRequestDTO) {
@@ -75,6 +79,8 @@ public class User {
         this.joinedOn = LocalDate.now();
         this.age = Period.between(  this.dateOfBirth,LocalDate.now()).getYears();
         this.address = new TreeSet<>();
+        this.wish = new TreeSet<>();
+        this.cartItem= new TreeSet<>();
     }
 
     public void addAddress(Address address){
@@ -87,6 +93,6 @@ public class User {
         this.getAddress().remove(address);
     }
     public int getAge() {
-        return Period.between(  this.dateOfBirth,LocalDate.now()).getYears();
+        return Period.between( this.dateOfBirth,LocalDate.now()).getYears();
     }
 }

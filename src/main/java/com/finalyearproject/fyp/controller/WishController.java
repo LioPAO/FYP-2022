@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/Wish")
@@ -38,7 +39,7 @@ public class WishController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<WishResponseDTO>> getWishByUser(@PathVariable("id") Long userId){
+    public ResponseEntity<Set<WishResponseDTO>> getWishByUser(@PathVariable("id") Long userId){
         return ResponseEntity.ok(wishService.getWishByUser(userId));
     }
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface WishService {
@@ -23,6 +24,6 @@ public interface WishService {
     @Transactional
     String delete(Long wishId);
 
-    List<WishResponseDTO> getWishByUser(Long userId);
+    Set<WishResponseDTO> getWishByUser(Long userId);
 
 }

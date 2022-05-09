@@ -1,0 +1,73 @@
+version: "3"
+services:
+
+  #NGINX is used for internal load balancing/helping the swarm load balancer
+  nginx:
+    image: nginx
+    volumes:
+      - ./:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - fyp
+    networks:
+      - fyp-network
+    deploy:
+      mode: global
+
+  #MYSQL DATABASE
+  fyp-db:
+    image: mysql
+    container_name: fyp-db
+    volumes:
+        - fyp_data:/var/lib/mysql
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: password
+        MYSQL_DATABASE: fyp
+    ports:
+      - "3306:3306"
+    networks:
+      - fyp-network
+    deploy:
+      placement:
+        constraints: [node.labels.role!=manager]
+
+  #REDIS CACHE
+  redis:
+    image: redis
+    container_name: fyp-redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+    networks:
+      - fyp-network
+    deploy:
+      placement:
+        constraints: [ node.labels.role!=manager ]
+
+  #FYP REST API SERVER APP
+  fyp-app:
+    build: .
+    ports:
+      - "9000:9000"
+    restart: always
+    depends_on:
+      - fyp-db
+      - redis
+    networks:
+      - fyp-network
+    deploy:
+      replicas: 3
+      placement:
+          constraints: [ node.labels.role!=manager ]
+
+volumes:
+  fyp_data:
+
+networks:
+  fyp-network:
+    driver: overlay
+    external: true
+

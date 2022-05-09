@@ -1,6 +1,5 @@
 package com.finalyearproject.fyp.mapper;
 
-
 import com.finalyearproject.fyp.dto.Response.WishResponseDTO;
 import com.finalyearproject.fyp.model.Wish;
 

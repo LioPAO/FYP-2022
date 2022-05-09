@@ -46,6 +46,7 @@ public class Product implements Comparable<Product> {
     @JoinTable(name = "Product_Category", joinColumns = {@JoinColumn(name = "product_id")}, inverseJoinColumns = {@JoinColumn(name = "category_id")})
     private Set<Category> category;
 
+    //CONSTRUCTOR===========================================================================
     public Product(ProductRequestDTO productRequestDTO) {
         this.inventory = new ProductInventory();
         this.inventory.setQuantity(productRequestDTO.getInventoryQuantity());
@@ -57,6 +58,7 @@ public class Product implements Comparable<Product> {
         this.category = new TreeSet<>();
     }
 
+    //INVENTORY================================================================================================================================
     public int addInventoryQuantityBy(int productQuantity) {
         int newQuantity = inventory.getQuantity() + productQuantity;
         inventory.setQuantity(newQuantity);
@@ -75,6 +77,12 @@ public class Product implements Comparable<Product> {
         return inventory.getQuantity();
     }
 
+    public void setInventoryQuantityBy(int productQuantity) {
+        inventory.setQuantity(productQuantity);
+    }
+
+
+    //CATEGORY====================================================================================================================
     public void addCategory(Category category) {
         this.category.add(category);
         category.getProducts().add(this);
@@ -82,7 +90,8 @@ public class Product implements Comparable<Product> {
 
     public void removeCategory(Category category) {
         if (!this.category.contains(category)) {
-            throw new ResourceNotFoundException(Message.resourceNotFound(ResourceType.CATEGORY, category.getId()) + " AMONG CATEGORIES IN PRODUCT ID: " + this.getId());
+            throw new ResourceNotFoundException(
+                    Message.resourceNotFound(ResourceType.CATEGORY, category.getId()) + " AMONG CATEGORIES IN PRODUCT ID: " + this.getId());
         }
         this.category.remove(category);
         category.getProducts().remove(this);
@@ -92,9 +101,7 @@ public class Product implements Comparable<Product> {
         return this.category;
     }
 
-    public void setInventoryQuantityBy(int productQuantity) {
-        inventory.setQuantity(productQuantity);
-    }
+
 
     @Override
     public int compareTo(Product o) {

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,8 +48,16 @@ public class WishServiceImpl implements WishService {
     )
     public WishResponseDTO createWish(WishRequestDTO wishRequestDTO) {
         User user = userService.getUser(wishRequestDTO.getUserId());
+        if (!user.getWish().isEmpty()){
+            for (Wish wish : user.getWish()) {
+                if (wish.getProduct().getId().equals(wishRequestDTO.getProductId())){
+                    return WishMapper.wishToWishResponseDTO(wish); //RETURN WISH IF WISH ALREADY EXISTS
+                }
+            }
+        }
         Product product = productService.getProduct(wishRequestDTO.getProductId());
         Wish wish= new Wish(user,product);
+        user.getWish().add(wish);
         wishRepository.save(wish);
         return WishMapper.wishToWishResponseDTO(wish);
     }
@@ -90,11 +99,11 @@ public class WishServiceImpl implements WishService {
 
     @Override
     @Cacheable(value = "wishesPerUser", key= "#userId", unless = "#result.size() > 100")
-    public List<WishResponseDTO> getWishByUser(Long userId) {
-        userService.getUser(userId);
-        return wishRepository.findAllByUserId(userId)
+    public Set<WishResponseDTO> getWishByUser(Long userId) {
+        User user = userService.getUser(userId);
+        return user.getWish()
                 .stream()
                 .map(WishMapper::wishToWishResponseDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 }

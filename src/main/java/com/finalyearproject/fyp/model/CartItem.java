@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -13,13 +12,15 @@ import java.time.LocalDate;
 @Setter
 @Getter
 @NoArgsConstructor
-public class Wish {
+@Table(name= "cart_item")
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     @Setter(AccessLevel.NONE)
     private Long id;
     private LocalDate addedOn;
+    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -29,11 +30,10 @@ public class Wish {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    //CONSTRUCTOR
-    public Wish(User user, Product product) {
+    public CartItem(User user, Product product, int quantity) {
         this.user = user;
         this.product = product;
+        this.quantity = quantity;
         this.addedOn = LocalDate.now();
     }
-
 }
