@@ -43,6 +43,11 @@ public class CartItemController {
         return ResponseEntity.ok(cartItemService.getCartItemByUser(userId));
     }
 
+    @PutMapping("/{id}/{quantity}")
+    public ResponseEntity<CartItemResponseDTO> updateQuantity(@PathVariable("id") Long cartItemId,
+                                                              @PathVariable("quantity") Integer quantity){
+        return ResponseEntity.ok(cartItemService.updateCartItem(cartItemId,quantity));
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCartItem(@PathVariable("id") Long cartItemId){
         return ResponseEntity.ok(cartItemService.delete(cartItemId));

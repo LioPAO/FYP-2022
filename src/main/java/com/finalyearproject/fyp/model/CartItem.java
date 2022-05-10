@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @Table(name= "cart_item")
-public class CartItem {
+public class CartItem implements Comparable<CartItem> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -35,5 +35,10 @@ public class CartItem {
         this.product = product;
         this.quantity = quantity;
         this.addedOn = LocalDate.now();
+    }
+
+    @Override
+    public int compareTo(CartItem o) {
+        return (int) (o.getId() - this.getId());
     }
 }

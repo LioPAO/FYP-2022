@@ -21,6 +21,9 @@ public interface CartItemService {
     List<CartItemResponseDTO> getAll();
 
     @Transactional
+    CartItemResponseDTO updateCartItem(Long cartItemId, Integer quantity);
+
+    @Transactional
     String delete(Long cartItemId);
 
     Set<CartItemResponseDTO> getCartItemByUser(Long userId);

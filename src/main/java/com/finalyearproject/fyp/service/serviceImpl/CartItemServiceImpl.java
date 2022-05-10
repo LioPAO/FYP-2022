@@ -77,12 +77,25 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    @Cacheable(value = "allcartItems", unless = "#result.size() > 100")
+    @Cacheable(value = "allcartItems")
     public List<CartItemResponseDTO> getAll() {
         return cartItemRepository.findAll()
                 .stream()
                 .map(CartItemMapper::cartItemToCartItemResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    @Caching(
+            put = {@CachePut(value = "cartItem", key = "#cartItemId")},
+            evict = {@CacheEvict(value = "allcartItems", allEntries = true)}
+    )
+    public CartItemResponseDTO updateCartItem(Long cartItemId, Integer quantity) {
+        CartItem cartItem = this.getCartItem(cartItemId);
+        cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
+        return CartItemMapper.cartItemToCartItemResponseDTO(cartItem);
     }
 
     @Transactional

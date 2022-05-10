@@ -25,6 +25,7 @@ spring:
         type: redis
 
 myredisconfig:
-    host: fyp-redis
+    #host: fyp-redis
+    host: localhost
     port: 6379
     time-to-live: 6000S

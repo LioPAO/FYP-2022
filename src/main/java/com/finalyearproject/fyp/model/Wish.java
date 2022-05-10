@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 @Setter
 @Getter
 @NoArgsConstructor
-public class Wish {
+public class Wish implements Comparable<Wish> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -36,4 +35,8 @@ public class Wish {
         this.addedOn = LocalDate.now();
     }
 
+    @Override
+    public int compareTo(Wish o) {
+        return (int) (o.getId() - this.getId());
+    }
 }
