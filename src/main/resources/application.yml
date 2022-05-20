@@ -1,12 +1,13 @@
 server:
     port: 9000
+
 spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
         password: password
-        #url: jdbc:mysql://fyp-db/fyp
+        url: jdbc:mysql://fyp-db/fyp
         username: root
-        url: jdbc:mysql://localhost:3306/fyp
+        #url: jdbc:mysql://localhost:3306/fyp
     h2:
         console:
             enabled: true
@@ -25,7 +26,7 @@ spring:
         type: redis
 
 myredisconfig:
-    #host: fyp-redis
-    host: localhost
+    host: fyp-redis
+    #host: localhost
     port: 6379
     time-to-live: 6000S

@@ -23,6 +23,7 @@ public class Category implements Comparable<Category>{
     private String name;
     private String description;
     private String imageUrl;
+
     @ManyToMany(mappedBy = "category",cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE

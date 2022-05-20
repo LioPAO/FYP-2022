@@ -65,6 +65,11 @@ public class UserController {
     }
 
     //ADDRESS====================================================================================================================
+    @GetMapping("/user/address/{userId}")
+    public ResponseEntity<Set<AddressResponseDTO>> getAddress(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok(userService.getAddress(userId));
+    }
+
     @PostMapping("/add/address/{addressId}/to/user/{userId}")
     public ResponseEntity<String> addAddress(@PathVariable("addressId") Long addressId,
                                              @PathVariable("userId") Long userId) {
@@ -75,11 +80,6 @@ public class UserController {
     public ResponseEntity<String> removeAddress(@PathVariable("addressId") Long addressId,
                                                 @PathVariable("userId") Long userId) {
         return ResponseEntity.ok(userService.removeAddress(addressId, userId));
-    }
-
-    @GetMapping("/user/address/{userId}")
-    public ResponseEntity<Set<AddressResponseDTO>> getAddress(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(userService.getAddress(userId));
     }
 
     @PostMapping("/add/addresses/to/user/{userId}")

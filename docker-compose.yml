@@ -10,7 +10,7 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - fyp
+      - fyp-app
     networks:
       - fyp-network
     deploy:
@@ -19,7 +19,6 @@ services:
   #MYSQL DATABASE
   fyp-db:
     image: mysql
-    container_name: fyp-db
     volumes:
         - fyp_data:/var/lib/mysql
     restart: always
@@ -35,9 +34,8 @@ services:
         constraints: [node.labels.role!=manager]
 
   #REDIS CACHE
-  redis:
+  fyp-redis:
     image: redis
-    container_name: fyp-redis
     command: redis-server
     ports:
       - "6379:6379"
@@ -49,17 +47,18 @@ services:
 
   #FYP REST API SERVER APP
   fyp-app:
-    build: .
+    image: fyp/ecommerce-restapi:2.0
     ports:
       - "9000:9000"
     restart: always
     depends_on:
       - fyp-db
-      - redis
+      - fyp-redis
     networks:
       - fyp-network
     deploy:
-      replicas: 3
+      mode: replicated
+      replicas: 2
       placement:
           constraints: [ node.labels.role!=manager ]
 
@@ -69,5 +68,4 @@ volumes:
 networks:
   fyp-network:
     driver: overlay
-    external: true
 
